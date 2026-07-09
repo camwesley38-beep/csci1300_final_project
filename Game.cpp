@@ -1,5 +1,6 @@
 #include "Game.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -7,6 +8,35 @@ Game::Game() {
     officer = Authority("Investigator", "I am watching the city closely.", 20);
     running = true;
     finalDay = 7;
+
+    if (!loadLocations("locations.txt")) {
+        locations.push_back("downtown");
+        locations.push_back("Warehouse District");
+        locations.push_back("suburbs");
+    }
+}
+
+bool Game::loadLocations(string filename) {
+    ifstream fileIn;
+    fileIn.open(filename);
+
+    if (!fileIn.is_open()) {
+        return false;
+    }
+
+    locations.clear();
+
+    string locationName;
+
+    while (getline(fileIn, locationName)) {
+        if (locationName !="") {
+            locations.push_back(locationName);
+        }
+    }
+
+    fileIn.close();
+
+    return locations.size() > 0;
 }
 
 // Main game loop for the checkpoint.
@@ -70,23 +100,23 @@ void Game::travel() {
 
     cout << endl;
     cout <<"--- Locations ---" << endl;
-    cout << "1. Downtown" << endl;
-    cout << "2. Warehouse District" << endl;
-    cout << "3. Suburbs" << endl;
+    
+    for (int i = 0; i < static_cast<int>(locations.size()); i++) {
+        cout << i + 1 << "." << locations[i] << endl;
+    }
+
     cout << "Choose location: ";
     cin >> choice;
 
-    if (choice == 1) {
-        player.moveLocation("Downtown");
-    } else if (choice == 2) {
-        player.moveLocation("Suburbs");
-    } else {
+    if (choice < 1 || choice > static_cast<int>(locations.size())) {
         cout << "Invalid location." << endl;
         return;
     }
 
+    player.moveLocation(locations[choice - 1]);
     player.nextDay();
-    cout << "You Moved to " << player.getLocation() << "." << endl;
+
+    cout << "You moved to " << player.getLocation() << "." << endl;
 
 }
 

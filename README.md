@@ -1,7 +1,7 @@
 # CSCI 1300 Final Project
 
 ## Project Theme
-TBA
+This game is a fictional risk managment game where the players hopes to live confortable and never work again after completing a series of thefts.However random civilians and officers will interact with the player if he devolps risk.The player needs to steal enough money while keeping his suspicion low before time runs out.
 
 ## Goal
 TBA

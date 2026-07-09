@@ -4,7 +4,7 @@
 This game is a fictional risk managment game where the players hopes to live confortable and never work again after completing a series of thefts.However random civilians and officers will interact with the player if he devolps risk.The player needs to steal enough money while keeping his suspicion low before time runs out.
 
 ## Goal
-TBA
+Collect enough money without being arrested before your times up
 
 ## How to Compile and Run
 TBA
@@ -19,4 +19,4 @@ TBA
 -Game: controls the game loop , the players choices and menu
 
 ## Extra Credit
-TBA
+Extra credit will be multiple endings, random events, and a simple map system.

@@ -9,6 +9,14 @@ Game::Game() {
     running = true;
     finalDay = 7;
 
+    if (!loadItems("item.txt")) {
+        shopItems.push_back(Item("FakeID", 75, "fakeid"));
+        shopItems.push_back(Item("OldPhone", 50, "phone"));
+        shopItems.push_back(Item("Crowbar",100, "crowbar"));
+        shopItems.push_back(Item("GasCan", 80, "gascan"));
+        shopItems.push_back(Item("Backpack", 60, "backpack"));
+    }
+
     if (!loadLocations("locations.txt")) {
         locations.push_back("downtown");
         locations.push_back("Warehouse District");
@@ -64,6 +72,8 @@ void Game::printMenu() {
     cout << "3.Take a risky job" << endl;
     cout << "4. Talk to authority" << endl;
     cout << "5. Quit" << endl;
+    cout << "6. Buy item" << endl;
+    cout << "7. View inventory" << endl;
     cout << "choose an option: ";
 
 }
@@ -79,9 +89,14 @@ void Game::handleChoice(int choice) {
         talkToAuthority();
     } else if (choice == 5) {
         running = false;
+    } else  if (choice == 6) {
+        shop();
+    } else if (choice == 7) {
+        viewInventory();
     } else {
-        cout << "Invalid choice." << endl;
+        cout << "Invalid option." << endl;
     }
+        
 }
 
 void Game::printStatus() {
@@ -123,12 +138,61 @@ void Game::travel() {
 void Game::riskyJob() {
     cout << endl;
     cout << "You chose a risky shortcut to earn money." << endl;
+
+    int moneyEarned = 150;
+    int riskAdded = 20;
+    int pressureAdded = 10;
+
+    if (hasItem("crowbar")) {
+        moneyEarned += 75;
+        riskAdded += 10;
+        cout << "Crowbar perk: you earned more, but suspicion rose faster." << endl;
+    }
+
+    if (hasItem("backpack")) {
+        moneyEarned += 75;
+        riskAdded += 10;
+        cout << "Crowbar perk: You earned more, but suspicion rose faster." << endl;
+    }
+
+    if(hasItem("backpack")) {
+        moneyEarned += 50;
+        riskAdded += 5;
+        cout << "Backpack perk: You carried more, but looked more suspicious." << endl;
+    }
+
+    if (hasItem("fakeid")) {
+        riskAdded -= 10;
+        cout << "FakeID perk: Suspicion from witnesses was reduced." << endl;
+    }
+
+    if (riskAdded < 0) {
+        riskAdded = 0;
+    }
+
+    player.earnMoney(moneyEarned);
+    player.increaseRisk(riskAdded);
+    player.addExperience(5);
+    officer.increasePressure(pressureAdded);
+    player.nextDay();
+
+    cout << "You earned $" << moneyEarned << "." << endl;
+    cout << "Your risk increased by " << riskAdded << "." << endl;
 }
 
 void Game::talkToAuthority() {
     cout << endl;
     cout << officer.getName() << ": " << officer.getDialogue() << endl;
     cout << "You try to calm things down." << endl;
+
+    if (hasItem("gascan")) {
+        officer.decreasePressure(15);
+        cout << "GasCan perk: Authority pressure cooled down." << endl;
+    }
+
+    if (hasItem("phone")) {
+        cout << "OldPhone perk: get information on risky areas before moving. " << endl;
+    }
 
     player.decreaseRisk(10);
     officer.decreasePressure(10);
@@ -157,5 +221,90 @@ void Game::printEnding() {
         cout << "Your rich and never have to work again" << endl;
     } else {
         cout << "Your too old and broke, lifes gonna be tough." << endl;
+    }
+}
+
+bool Game::loadItems(string filename) {
+    ifstream fileIn;
+    fileIn.open(filename);
+
+    if (!fileIn.is_open()) {
+        return false;
+    }
+
+    shopItems.clear();
+
+    string name;
+    int cost;
+    string perkType;
+
+    while (fileIn >> name >> cost >> perkType) {
+        Item item(name, cost, perkType);
+        shopItems.push_back(item);
+    }
+
+    fileIn.close();
+
+    return shopItems.size() > 0;
+}
+
+bool Game::hasItem(string perkType) {
+    for (int i = 0; i < static_cast<int>(inventory.size()); i++) {
+        if (inventory[i].getPerkType() == perkType) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void Game::viewInventory() {
+    cout << endl;
+    cout << "--- Inventory ---" << endl;
+
+    if (inventory.size() == 0) {
+        cout << "You do not have any items." << endl;
+        return;
+    }
+
+    for (int i = 0; i < static_cast<int>(inventory.size()); i++) {
+        cout << i + 1 << "." << inventory[i].getName()
+        << " - perk: " << inventory[i].getPerkType() << endl;
+
+    }
+}
+
+void Game::shop() {
+    cout << endl;
+    cout << "--- Black Market Shop ---" << endl;
+
+    for (int i = 0; i < static_cast<int>(shopItems.size()); i++) {
+        cout << i + 1 << "." << shopItems[i].getName()
+        << " - $" << shopItems[i].getCost()
+        << " - perk: " << shopItems[i].getPerkType() << endl;
+    }
+
+    cout << "Choose an item to buy, or 0 to leave: ";
+
+    int choice;
+    cin >> choice;
+
+    if (choice == 0) {
+        return;
+    }
+
+    if (choice < 1 || choice > static_cast<int>(shopItems.size())) {
+        cout << "Invalid item." << endl;
+        return;
+    }
+
+    Item selectedItem = shopItems[choice - 1];
+
+    if (player.spendMoney(selectedItem.getCost())) {
+        inventory.push_back(selectedItem);
+        cout << "You bought " << selectedItem.getName() << "." << endl;
+
+    } else {
+        cout << "You do not have enough money." << endl;
     }
 }

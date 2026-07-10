@@ -3,6 +3,9 @@
 
 #include "Player.h"
 #include "Authority.h"
+#include <vector>
+#include "Item.h"
+#include <string>
 
 // Game controls the games main loop, player decesions and menu
 
@@ -13,8 +16,17 @@ class Game {
     bool running;
     int finalDay;
 
+    vector<string> locations;
+    vector<Item> shopItems;
+    vector<Item> inventory;
+
     public:
     Game();
+
+    bool loadItems(string filename);
+    void shop();
+    void viewInventory();
+    bool hasItem(string perkType);
 
     void start();
     void printMenu();
@@ -27,6 +39,8 @@ class Game {
 
     bool isGameOver();
     void printEnding();
+    bool loadLocations(string filename);
+
 
 };
 

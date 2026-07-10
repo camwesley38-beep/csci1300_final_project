@@ -1,0 +1,5 @@
+Fake ID 75 fakeid
+Old Phone 50 phone
+Crowbar 100 crowbar
+Gas Can 80 gascan
+Backpack 60 backpack

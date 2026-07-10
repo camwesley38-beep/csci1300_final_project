@@ -2,3 +2,5 @@ Downtown
 Warehouse District
 Suburbs
 Court House
+Police Station
+Abandoned Mall

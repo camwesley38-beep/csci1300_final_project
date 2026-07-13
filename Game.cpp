@@ -22,6 +22,11 @@ Game::Game() {
         locations.push_back("Warehouse District");
         locations.push_back("suburbs");
     }
+
+    civilians.push_back(Character("Store Clerk", "I heard about about a security increase at the warehouse recently, i wonder why"));
+    civilians.push_back(Character("Family Member", "I've heard people talking about you recently. Lay low."));
+    civilians.push_back(Character("Paraniod civilian", "I havent see you around much what are you doing"));
+    civilians.push_back(Character("Old freind","Ive heard some rumours i could calm it down for you"));    
 }
 
 bool Game::loadLocations(string filename) {
@@ -74,6 +79,8 @@ void Game::printMenu() {
     cout << "5. Quit" << endl;
     cout << "6. Buy item" << endl;
     cout << "7. View inventory" << endl;
+    cout << "8. View map" << endl;
+    cout << "9. Talk to civilian" << endl;
     cout << "choose an option: ";
 
 }
@@ -93,6 +100,10 @@ void Game::handleChoice(int choice) {
         shop();
     } else if (choice == 7) {
         viewInventory();
+    } else if (choice == 8) {
+        viewMap();
+    } else if (choice == 9) {
+        talkToCivilian();
     } else {
         cout << "Invalid option." << endl;
     }
@@ -274,6 +285,32 @@ void Game::viewInventory() {
     }
 }
 
+void Game::viewMap() {
+    cout << endl;
+    cout << "--- City Map ---" << endl;
+
+    if (locations.size() == 0) {
+        cout << "No locations are currently loaded." << endl;
+        return;
+    }
+
+    for (int i = 0; i < static_cast<int>(locations.size()); i++) {
+        cout << i + 1 << locations[i];
+
+        if (locations[i] == player.getLocation()) {
+            cout << "  <-- You are here";
+        }
+        cout << endl;
+    }
+
+    cout << endl;
+    cout << "Travel paths:" << endl;
+
+    for(int i = 0; i < static_cast<int>(locations.size()) - 1; i++) {
+        cout << locations[i] << " -> " << locations[i + 1] << endl;
+    }
+} 
+
 void Game::shop() {
     cout << endl;
     cout << "--- Black Market Shop ---" << endl;
@@ -307,4 +344,59 @@ void Game::shop() {
     } else {
         cout << "You do not have enough money." << endl;
     }
+}
+
+void Game::talkToCivilian() {
+    cout << endl;
+    cout << "--- Civilians ---" << endl;
+
+    for (int i = 0; i < static_cast<int>(civilians.size()); i++) {
+        cout << i + 1 << ". " << civilians[i].getName() << endl;
+    }
+    
+    cout << "Choose someone to talk to; or 0 to leave:";
+    
+    int choice;
+    cin >> choice;
+
+    if (choice == 0) {
+        return;
+    }
+
+    if (choice < 1 || choice > static_cast<int>(civilians.size())) {
+        cout << "Invalid civilian." << endl;
+        return;
+    }
+
+    Character selectedCivilian = civilians[choice - 1];
+
+    cout << endl;
+    cout << selectedCivilian.getName() << ":" 
+        << selectedCivilian.getDialogue() << endl;
+
+    if (choice == 1) {
+        cout << "The clerk gives you warning about risky locations." << endl;
+        player.addExperience(3);
+    } else if (choice == 2) {
+        cout << "This family member helps lower your risk." << endl;
+        player.decreaseRisk(10);
+    } else if (choice == 3) {
+        cout << "This paraniod civilian spreads rumours increasing suspicion." << endl;
+
+        if(hasItem("fakeid")) {
+            cout << "FakeID perk: The rumour is spread on your fake identy not you" << endl;
+
+
+        } else {
+            player.increaseRisk(10);
+            officer.increasePressure(5);
+
+        }
+    } else if (choice == 4) {
+        cout << "Your old friend helps calm things down." << endl;
+        player.decreaseRisk(5);
+        officer.decreasePressure(5);
+    }
+
+    player.nextDay();
 }

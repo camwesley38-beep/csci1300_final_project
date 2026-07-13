@@ -20,3 +20,26 @@ TBA
 
 ## Extra Credit
 Extra credit will be multiple endings, random events, and a simple map system.
+
+## Checkpoint 3 Progress
+
+For Checkpoint 3, the game has a working menu, player stats, travel system, map display, character interactions, item shop, inventory system, and item perks. The game reads location data from `locations.txt` and item data from `items.txt`, then uses that file data in the running program. The player can travel, buy items, view inventory, talk to civilians, talk to authority, take risky jobs, and make choices that affect money, risk, authority pressure, and the ending.
+
+## File Input
+
+The game uses file input from:
+- `locations.txt`: loads the locations shown in the travel menu and map.
+- `items.txt`: loads shop items, prices, and item perk types.
+
+## Current Features
+
+- Working game loop and main menu
+- Player stats: money, risk, experience, day, and location
+- Location travel system
+- Map display
+- Civilian character interactions
+- Authority interaction
+- Item shop
+- Inventory system
+- Item perks that affect risk, money, or authority pressure
+- Basic win/loss ending system

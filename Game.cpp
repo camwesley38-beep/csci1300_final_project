@@ -8,6 +8,7 @@ Game::Game() {
     officer = Authority("Investigator", "I am watching the city closely.", 20);
     running = true;
     finalDay = 7;
+    moneyGoal = 500;
 
     if (!loadItems("item.txt")) {
         shopItems.push_back(Item("FakeID", 75, "fakeid"));
@@ -145,7 +146,8 @@ void Game::travel() {
     cout << "You moved to " << player.getLocation() << "." << endl;
 
 }
-
+// Risky jobs are the main money making method.
+// some items increase rewards but also incre risk.
 void Game::riskyJob() {
     cout << endl;
     cout << "You chose a risky shortcut to earn money." << endl;
@@ -219,22 +221,36 @@ bool Game::isGameOver() {
         return true;
     }
 
+    if (player.getMoney() >= moneyGoal) {
+        return true;
+    }
+
     return false;
 }
 
+// Prints the ending based on players money, risk and time.
+// Prints the final ending based on the player's money, risk, and time.
 void Game::printEnding() {
     cout << endl;
     cout << "--- Game Over ---" << endl;
 
-    if (player.getRisk() >= 100) {
-        cout << "Your risk got too high, and your wanted by the police." << endl;
-    } else if (player.getMoney() >= 1000) {
-        cout << "Your rich and never have to work again" << endl;
+    if (!running && player.getRisk() < 100 && player.getMoney() < moneyGoal) {
+        cout << "You quit before finishing your plan." << endl;
+    } else if (player.getRisk() >= 100) {
+        cout << "Arrested Ending: Your suspicion got too high, and authority caught up with you." << endl;
+    } else if (player.getMoney() >= moneyGoal && player.getRisk() <= 40) {
+        cout << "Clean Escape Ending: You made enough money and kept suspicion low." << endl;
+    } else if (player.getMoney() >= moneyGoal) {
+        cout << "Rich but Watched Ending: You made enough money, but people are suspicious of you." << endl;
+    } else if (player.getDay() > finalDay && player.getMoney() < moneyGoal) {
+        cout << "Out of Time Ending: You ran out of days before making enough money." << endl;
     } else {
-        cout << "Your too old and broke, lifes gonna be tough." << endl;
+        cout << "Unfinished Ending: Your choices left the story unresolved." << endl;
     }
 }
 
+
+// Reads item names, costs, and perk types from items.txt 
 bool Game::loadItems(string filename) {
     ifstream fileIn;
     fileIn.open(filename);
@@ -258,7 +274,7 @@ bool Game::loadItems(string filename) {
 
     return shopItems.size() > 0;
 }
-
+// Checks if the player owns an item with a certain perk type.
 bool Game::hasItem(string perkType) {
     for (int i = 0; i < static_cast<int>(inventory.size()); i++) {
         if (inventory[i].getPerkType() == perkType) {
@@ -310,7 +326,7 @@ void Game::viewMap() {
         cout << locations[i] << " -> " << locations[i + 1] << endl;
     }
 } 
-
+// lets player by items that affect the game play for later choices.
 void Game::shop() {
     cout << endl;
     cout << "--- Black Market Shop ---" << endl;

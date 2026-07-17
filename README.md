@@ -32,7 +32,20 @@ The game uses file input from:
 
 ## Character system
 
-The game includes four meaningful civilian characters: Store clerk, Family Member, Paranoid Civilian, and Old Friend.Each character has unique dialogue that affect the game. 
+The game includes four meaningful civilian characters: Store clerk, Family Member, Paranoid Civilian, and Old Friend.Each character has 
+unique dialogue that affect the game. 
+
+## Item and Inventory System
+
+The game includes at least five items: FakeID, OldPhone, Crowbar, GasCan, and Backpack. Items are loaded from `items.txt` and can be bought from the shop. After purchase, items are stored in the player's inventory and affect gameplay through perks.
+
+
+##  Tradeoff system
+The game uses heavily into its risk reward system riskyjob is how you make money but grows suspicion and pressure witch can lead to a gameover.
+
+## Endings
+
+The game has multiple ending based on money, risk and time.
 
 ## Current Features
 

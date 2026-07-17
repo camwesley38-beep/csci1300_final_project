@@ -15,6 +15,7 @@ class Game {
     Authority officer;
     bool running;
     int finalDay;
+    int moneyGoal;
 
     vector<string> locations;
     vector<Item> shopItems;

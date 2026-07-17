@@ -110,16 +110,18 @@ void Game::handleChoice(int choice) {
     }
         
 }
-
+// Prints the main dashboard showing the player's current progress
 void Game::printStatus() {
     cout << endl;
-    cout << "--- Player Status ---" << endl;
+    cout << "========== Player Dashboard =========" << endl;
     cout << "Day: " << player.getDay() << endl;
     cout << "Location: " << player.getLocation() << endl;
     cout << "Money: $" << player.getMoney() << endl;
     cout << "Risk: " << player.getRisk() << endl;
     cout << "Experience: " << player.getExperience() << endl;
     cout << "Authority Pressure: " << officer.getPressureLevel() << endl;
+    cout << "Inventory Items: " << inventory.size() << endl;
+    cout << "===========================" << endl;
 }
 
 void Game::travel() {

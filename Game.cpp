@@ -9,7 +9,7 @@ Game::Game() {
     officer = Authority("Investigator", "I am watching the city closely.", 20);
     running = true;
     finalDay = 7;
-    moneyGoal = 850;
+    moneyGoal = 1000;
 
     if (!loadItems("item.txt")) {
         shopItems.push_back(Item("FakeID", 75, "fakeid"));
@@ -284,6 +284,10 @@ bool Game::isGameOver() {
         return true;
     }
 
+    if (officer.getPressureLevel() >= moneyGoal) {
+        return true;
+    }
+
     return false;
 }
 
@@ -301,10 +305,12 @@ void Game::printEnding() {
         cout << "Clean Escape Ending: You made enough money and kept suspicion low." << endl;
     } else if (player.getMoney() >= moneyGoal) {
         cout << "Rich but Watched Ending: You made enough money, but people are suspicious of you." << endl;
+    } else if (officer.getPressureLevel() >= 100) {
+        cout << "Authority Crackdown Ending: Authority pressure reached 100 officer have arrested you << endl;" << endl;
     } else if (player.getDay() > finalDay && player.getMoney() < moneyGoal) {
         cout << "Out of Time Ending: You ran out of days before making enough money." << endl;
     } else {
-        cout << "Unfinished Ending: Your choices left the story unresolved." << endl;
+        cout << "Unfinished ending: your choices left story unresolved." << endl;
     }
 
     cout << "Final Score: " << calculateScore() << endl;

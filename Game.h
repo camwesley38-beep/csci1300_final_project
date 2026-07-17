@@ -20,6 +20,7 @@ class Game {
     vector<string> locations;
     vector<Item> shopItems;
     vector<Item> inventory;
+    vector<int> locationRisks;
     // Stores the civilians the player can talk to in game.
     vector<Character> civilians;
 
@@ -45,6 +46,8 @@ class Game {
     bool isGameOver();
     void printEnding();
     bool loadLocations(string filename);
+
+    void setupLocationRisks();
 
 
 };

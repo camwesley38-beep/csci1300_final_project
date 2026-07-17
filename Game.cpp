@@ -8,7 +8,7 @@ Game::Game() {
     officer = Authority("Investigator", "I am watching the city closely.", 20);
     running = true;
     finalDay = 7;
-    moneyGoal = 500;
+    moneyGoal = 850;
 
     if (!loadItems("item.txt")) {
         shopItems.push_back(Item("FakeID", 75, "fakeid"));
@@ -23,6 +23,8 @@ Game::Game() {
         locations.push_back("Warehouse District");
         locations.push_back("suburbs");
     }
+
+    setupLocationRisks();
     // civilians givethe player different story clues and gameplay effects.
     civilians.push_back(Character("Store Clerk", "I heard about about a security increase at the warehouse recently, i wonder why"));
     civilians.push_back(Character("Family Member", "I've heard people talking about you recently. Lay low."));
@@ -143,9 +145,12 @@ void Game::travel() {
     }
 
     player.moveLocation(locations[choice - 1]);
+    int travelRisk = locationRisks[choice - 1] / 5;
+    player.increaseRisk(travelRisk);
     player.nextDay();
 
     cout << "You moved to " << player.getLocation() << "." << endl;
+    cout << "Travel risk increased by " << travelRisk << "." << endl;
 
 }
 // Risky jobs are the main money making method.
@@ -154,30 +159,24 @@ void Game::riskyJob() {
     cout << endl;
     cout << "You chose a risky shortcut to earn money." << endl;
 
-    int moneyEarned = 150;
-    int riskAdded = 20;
-    int pressureAdded = 10;
+    int moneyEarned = 125;
+    int riskAdded = 25;
+    int pressureAdded = 15;
 
     if (hasItem("crowbar")) {
         moneyEarned += 75;
-        riskAdded += 10;
+        riskAdded += 20;
         cout << "Crowbar perk: you earned more, but suspicion rose faster." << endl;
     }
 
     if (hasItem("backpack")) {
-        moneyEarned += 75;
+        moneyEarned += 50;
         riskAdded += 10;
         cout << "Crowbar perk: You earned more, but suspicion rose faster." << endl;
     }
 
-    if(hasItem("backpack")) {
-        moneyEarned += 50;
-        riskAdded += 5;
-        cout << "Backpack perk: You carried more, but looked more suspicious." << endl;
-    }
-
     if (hasItem("fakeid")) {
-        riskAdded -= 10;
+        riskAdded -= 8;
         cout << "FakeID perk: Suspicion from witnesses was reduced." << endl;
     }
 
@@ -189,19 +188,60 @@ void Game::riskyJob() {
     player.increaseRisk(riskAdded);
     player.addExperience(5);
     officer.increasePressure(pressureAdded);
+    
+    if (officer.shouldInvestigate()) {
+        cout << "Authority pressure is high. Investigators are watching more closely." << endl;
+        player.increaseRisk(5);
+    }
     player.nextDay();
 
     cout << "You earned $" << moneyEarned << "." << endl;
     cout << "Your risk increased by " << riskAdded << "." << endl;
+    cout << "Authority pressure increased by " << pressureAdded << "." << endl;
 }
-
+// Lets the player interact with authority.
+// The player can lower pressure, spend money for help, or leave.
 void Game::talkToAuthority() {
     cout << endl;
     cout << officer.getName() << ": " << officer.getDialogue() << endl;
-    cout << "You try to calm things down." << endl;
+
+    cout << "--- Authority Options ---" << endl;
+    cout << "1. Cooperate and aswer questions" << endl;
+    cout << "2. Pay for legal help ($100)" << endl;
+    cout << "3. Stay quiet and leave" << endl;
+    cout << "Choose an option: ";
+
+    int choice;
+    cin >> choice;
+
+    if (choice == 1) {
+        cout << "You Cooperate carefully.Pressure goes down, but it takes time." << endl;
+        officer.decreasePressure(15);
+        player.decreaseRisk(5);
+        player.addExperience(3);
+        player.nextDay();
+
+    } else if (choice == 2) {
+        if (player.spendMoney(100)) {
+            cout << "Legal help lowers both risk and authority pressure." << endl;
+            officer.decreasePressure(25);
+            player.decreaseRisk(15);
+            player.nextDay();
+        } else {
+            cout << "You do not have enough money for legal help." << endl;
+        }
+    } else if (choice == 3) {
+        cout << "You leave without saying much. Authority becomes more suspicious." << endl;
+        officer.increasePressure(10);
+        player.increaseRisk(5);
+        player.nextDay();
+    } else {
+        cout << "Invalid option." << endl;
+        return;
+    }
 
     if (hasItem("gascan")) {
-        officer.decreasePressure(15);
+        officer.decreasePressure(10);
         cout << "GasCan perk: Authority pressure cooled down." << endl;
     }
 
@@ -209,9 +249,10 @@ void Game::talkToAuthority() {
         cout << "OldPhone perk: get information on risky areas before moving. " << endl;
     }
 
-    player.decreaseRisk(10);
-    officer.decreasePressure(10);
-    player.nextDay();
+    if (officer.getPressureLevel() >= 80) {
+        cout << "Authority pressure is extremely high." << endl;
+        player.increaseRisk(5);
+    }
 }
 
 bool Game::isGameOver() {
@@ -318,15 +359,20 @@ void Game::viewMap() {
         if (locations[i] == player.getLocation()) {
             cout << "  <-- You are here";
         }
+
+        if(hasItem("phone") && i < static_cast<int>(locationRisks.size())) {
+            cout << " | Risk level: " << locationRisks[i];
+        }
+
         cout << endl;
     }
 
-    cout << endl;
-    cout << "Travel paths:" << endl;
+    if (hasItem("phone")) {
+        cout << "Oldphone perk: You can preview location risk levels." << endl;
+    } else {
+        cout << "Buy the OldPhone to preview location risk levels." << endl;
+    } 
 
-    for(int i = 0; i < static_cast<int>(locations.size()) - 1; i++) {
-        cout << locations[i] << " -> " << locations[i + 1] << endl;
-    }
 } 
 // lets player by items that affect the game play for later choices.
 void Game::shop() {
@@ -419,4 +465,27 @@ void Game::talkToCivilian() {
     }
 
     player.nextDay();
+}
+
+// Gives each location a risk level used during travel.
+void Game::setupLocationRisks() {
+    locationRisks.clear();
+
+    for (int i = 0; i < static_cast<int>(locations.size()); i++) {
+        if (locations[i] == "Downtown") {
+            locationRisks.push_back(10);
+        } else if (locations[i] == "Warehouse District") {
+            locationRisks.push_back(25);
+        } else if (locations[i] == "Suburbs") {
+            locationRisks.push_back(5);
+        } else if (locations[i] == "Court House") {
+            locationRisks.push_back(20);
+        } else if (locations[i] == "Police Station") {
+            locationRisks.push_back(35);
+        } else if (locations[i] == "Abandoned Mall") {
+            locationRisks.push_back(30);
+        } else {
+            locationRisks.push_back(15);
+        }
+    }
 }

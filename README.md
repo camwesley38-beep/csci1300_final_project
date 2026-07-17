@@ -9,7 +9,7 @@ Collect enough money without being arrested before your times up
 ## How to Compile and Run
 g++ -std=c++17 -Wall -Werror -Wpedantic Player.cpp Character.cpp Authority.cpp Item.cpp Game.cpp main.cpp -o checkpoint3
 ## How to Play
-TBA
+The player chooses options for a menu.The player can view status, travel,take risky jobs, talk to authority , buy items , view inventory, view map and talk to civilians.Each move can affect money,risk,experence,authority pressure or the current day
 
 ## Classes
 - Player: stores the users money, risk ,experience , day and location
@@ -43,6 +43,7 @@ The game includes at least five items: FakeID, OldPhone, Crowbar, GasCan, and Ba
 ##  Tradeoff system
 The game uses heavily into its risk reward system riskyjob is how you make money but grows suspicion and pressure witch can lead to a gameover.
 
+The game was balanced so risky jobs are more dangerous.Risky jobs now raise both player risk and authority pressure.Talking to authority gives the player differnent choices, such as cooperating, paying for legal help, or leaving quietly. Each option has a different cost or consequence
 ## Endings
 
 The game has multiple ending based on money, risk and time.
@@ -61,3 +62,6 @@ The game has multiple ending based on money, risk and time.
 - Basic win/loss ending system
 - Four meaningful civilian characters
 - Character interactions that affect risk, pressure or experience
+- Locations now have different risk levels.
+- The OldPhone item lets the player preview location risk before traveling.
+- Traveling can increase risk depending on the location chosen.

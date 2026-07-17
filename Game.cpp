@@ -84,6 +84,7 @@ void Game::printMenu() {
     cout << "7. View inventory" << endl;
     cout << "8. View map" << endl;
     cout << "9. Talk to civilian" << endl;
+    cout << "10. Recommend next location" << endl;
     cout << "choose an option: ";
 
 }
@@ -107,9 +108,13 @@ void Game::handleChoice(int choice) {
         viewMap();
     } else if (choice == 9) {
         talkToCivilian();
+    } else if (choice == 10) {
+        recommendLocation();
     } else {
-        cout << "Invalid option." << endl;
+         cout << "Invalid option." << endl;
     }
+    
+    
         
 }
 // Prints the main dashboard showing the player's current progress
@@ -487,5 +492,60 @@ void Game::setupLocationRisks() {
         } else {
             locationRisks.push_back(15);
         }
+    }
+}
+
+// Recommends a location based on risk level and player's current situation.
+// This is used as a map recommendation algorithm for extra credit.
+void Game::recommendLocation() {
+    cout << endl;
+    cout << "--- Location Recommendation ---" << endl;
+
+    if (locations.size() == 0 || locationRisks.size() == 0) {
+        cout << "No map data is available." << endl;
+        return;
+    }
+
+    int bestIndex = -1;
+    int bestScore = 10000;
+
+    for (int i = 0; i < static_cast<int>(locations.size()); i++) {
+        int score = locationRisks[i];
+
+        if (locations[i] == player.getLocation()) {
+            score += 25;
+        }
+
+        if (player.getRisk() >= 60) {
+            score += locationRisks[i];
+        }
+
+        if (player.getMoney() < moneyGoal / 2 && locations[i] == "Warehouse District") {
+            score += 10;
+        }
+
+        if (score < bestScore) {
+            bestScore = score;
+            bestIndex = i;
+        }
+
+
+
+    }
+    
+    if (bestIndex == -1) {
+        cout << "Could not find a recommendation." << endl;
+        return;
+    }
+
+    cout << "Recommended location: " << locations[bestIndex] << endl;
+    cout << "Location risk: " << locationRisks[bestIndex] << endl;
+
+    if (player.getRisk() >= 60) {
+        cout << "Reason: Your risk is high so the algorith recommends a safer location" << endl;
+    } else if (player.getMoney() < moneyGoal / 2) {
+        cout << "Reason: You still need money, so the algorithm balances profit and risk." << endl;
+    } else {
+        cout << "Reason: This location has a good risk score for your current situation." << endl;
     }
 }

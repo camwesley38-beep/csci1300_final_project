@@ -49,7 +49,7 @@ class Game {
 
     void setupLocationRisks();
 
-
+    void recommendLocation();
 };
 
 #endif

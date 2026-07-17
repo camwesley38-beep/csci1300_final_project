@@ -20,6 +20,10 @@ The player chooses options for a menu.The player can view status, travel,take ri
 ## Extra Credit
 Extra credit will be multiple endings, random events, and a simple map system.
 
+Extra Credit Feature: Map Recommendation Algorithm
+
+The game includes a map recommendation algorithm. The player can choose option 10 to get a recommended next location. The algorithm checks the location risk levels, the player's current risk, current money, and current location. It then recommends a location that balances safety and progress toward the money goal.
+
 ## Checkpoint 3 Progress
 
 For Checkpoint 3, the game has a working menu, player stats, travel system, map display, character interactions, item shop, inventory system, and item perks. The game reads location data from `locations.txt` and item data from `items.txt`, then uses that file data in the running program. The player can travel, buy items, view inventory, talk to civilians, talk to authority, take risky jobs, and make choices that affect money, risk, authority pressure, and the ending.

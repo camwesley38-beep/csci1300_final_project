@@ -24,6 +24,8 @@ class Game {
     // Stores the civilians the player can talk to in game.
     vector<Character> civilians;
 
+    int calculateScore();
+
     public:
     Game();
 
@@ -42,10 +44,12 @@ class Game {
     void riskyJob();
     void talkToAuthority();
     void talkToCivilian();
+    void printHelp();
 
     bool isGameOver();
     void printEnding();
     bool loadLocations(string filename);
+
 
     void setupLocationRisks();
 

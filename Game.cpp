@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <iostream>
 #include <fstream>
+#include <limits>
 
 using namespace std;
 
@@ -66,6 +67,13 @@ void Game::start() {
         int choice;
         cin >> choice;
 
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input.Please enter a number." << endl;
+            continue;
+        }
+
         handleChoice(choice);
 
 
@@ -85,6 +93,7 @@ void Game::printMenu() {
     cout << "8. View map" << endl;
     cout << "9. Talk to civilian" << endl;
     cout << "10. Recommend next location" << endl;
+    cout << "11. How to play" << endl;
     cout << "choose an option: ";
 
 }
@@ -110,8 +119,10 @@ void Game::handleChoice(int choice) {
         talkToCivilian();
     } else if (choice == 10) {
         recommendLocation();
+    } else if (choice == 11) {
+        printHelp();
     } else {
-         cout << "Invalid option." << endl;
+        cout << "Invalid option." << endl;
     }
     
     
@@ -295,6 +306,12 @@ void Game::printEnding() {
     } else {
         cout << "Unfinished Ending: Your choices left the story unresolved." << endl;
     }
+
+    cout << "Final Score: " << calculateScore() << endl;
+    cout << "Final Money: $" << player.getMoney() << endl;
+    cout << "Final Risk: " << player.getRisk() << endl;
+    cout << "Final Authority Pressure: " << officer.getPressureLevel() << endl;
+    cout << "Item Collected: " << inventory.size() << endl;
 }
 
 
@@ -548,4 +565,36 @@ void Game::recommendLocation() {
     } else {
         cout << "Reason: This location has a good risk score for your current situation." << endl;
     }
+}
+
+void Game::printHelp() {
+    cout << endl;
+    cout <<"--- How to Play ---" << endl;
+    cout <<"Goal: Earn $" << moneyGoal << " before day " << finalDay << "." << endl;
+    cout << "Keep your risk below 100 or you lose." << endl;
+    cout << "Risky jobs earn money fast but increase risk and authority pressure." << endl;
+    cout << "Traveling uses days and some locations are riskier than others." << endl;
+    cout << "Items can help you, but some create tradeoffs." << endl;
+    cout << "Use the map and recommendation option to make better choices." << endl;
+}
+
+int Game::calculateScore() {
+    int score = 0;
+
+    score += player.getMoney();
+    score += player.getExperience() * 10;
+    score += inventory.size() * 25;
+    score -= player.getRisk() * 3;
+    score -= officer.getPressureLevel() * 2;
+    score -= player.getDay() * 5;
+
+    if (player.getMoney() >= moneyGoal) {
+        score += 200;
+    }
+
+    if (score < 0) {
+        score = 0;
+    }
+
+    return score;
 }

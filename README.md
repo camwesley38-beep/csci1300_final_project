@@ -7,8 +7,7 @@ This game is a fictional risk managment game where the players hopes to live con
 Collect enough money without being arrested before your times up
 
 ## How to Compile and Run
-TBA
-
+g++ -std=c++17 -Wall -Werror -Wpedantic Player.cpp Character.cpp Authority.cpp Item.cpp Game.cpp main.cpp -o checkpoint3
 ## How to Play
 TBA
 
@@ -31,6 +30,10 @@ The game uses file input from:
 - `locations.txt`: loads the locations shown in the travel menu and map.
 - `items.txt`: loads shop items, prices, and item perk types.
 
+## Character system
+
+The game includes four meaningful civilian characters: Store clerk, Family Member, Paranoid Civilian, and Old Friend.Each character has unique dialogue that affect the game. 
+
 ## Current Features
 
 - Working game loop and main menu
@@ -43,3 +46,5 @@ The game uses file input from:
 - Inventory system
 - Item perks that affect risk, money, or authority pressure
 - Basic win/loss ending system
+- Four meaningful civilian characters
+- Character interactions that affect risk, pressure or experience

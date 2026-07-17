@@ -19,6 +19,7 @@ class Game {
     vector<string> locations;
     vector<Item> shopItems;
     vector<Item> inventory;
+    // Stores the civilians the player can talk to in game.
     vector<Character> civilians;
 
     public:

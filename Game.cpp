@@ -22,11 +22,11 @@ Game::Game() {
         locations.push_back("Warehouse District");
         locations.push_back("suburbs");
     }
-
+    // civilians givethe player different story clues and gameplay effects.
     civilians.push_back(Character("Store Clerk", "I heard about about a security increase at the warehouse recently, i wonder why"));
     civilians.push_back(Character("Family Member", "I've heard people talking about you recently. Lay low."));
     civilians.push_back(Character("Paraniod civilian", "I havent see you around much what are you doing"));
-    civilians.push_back(Character("Old freind","Ive heard some rumours i could calm it down for you"));    
+    civilians.push_back(Character("Old Freind","Ive heard some rumours i could calm it down for you"));    
 }
 
 bool Game::loadLocations(string filename) {
@@ -346,6 +346,8 @@ void Game::shop() {
     }
 }
 
+// Each characters gives a differnt effect so characters matter in gameplay.
+// Lets players talk to civilians.
 void Game::talkToCivilian() {
     cout << endl;
     cout << "--- Civilians ---" << endl;
